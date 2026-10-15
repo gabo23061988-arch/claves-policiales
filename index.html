@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claves Policiales</title>
+<meta name="theme-color" content="#1d4ed8">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Claves">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#14213d;--mut:#667085;--ac:#1d4ed8;--bd:#d9dee7;--hl:#fde68a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1420;--card:#1a2233;--tx:#e8ecf4;--mut:#9aa6bd;--ac:#6ea0ff;--bd:#2c3750;--hl:#6b5a10}}
+:root[data-theme="dark"]{--bg:#0f1420;--card:#1a2233;--tx:#e8ecf4;--mut:#9aa6bd;--ac:#6ea0ff;--bd:#2c3750;--hl:#6b5a10}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0 12px;color:var(--ac)}
+.bar{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
+input{width:100%;font-size:18px;padding:12px 14px;border:2px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);outline:none}
+input:focus{border-color:var(--ac)}
+.cnt{font-size:13px;color:var(--mut);margin:6px 2px}
+.row{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:6px}
+.code{min-width:64px;text-align:center;font-weight:700;font-size:17px;color:#fff;background:var(--ac);border-radius:8px;padding:4px 8px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .code{color:#0f1420}}
+.sub .code{background:#b45309}
+.txt{font-size:16px}
+mark{background:var(--hl);color:inherit;border-radius:3px}
+h2{font-size:14px;color:var(--mut);margin:18px 0 6px;text-transform:uppercase;letter-spacing:.05em}
+.abc{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.abc div{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:14px}
+.abc b{color:var(--ac);margin-right:6px}
+.empty{text-align:center;color:var(--mut);padding:24px}
+</style>
+</head>
+<body>
+<main>
+<h1>🚓 Claves Policiales</h1>
+<div class="bar"><input id="q" type="search" placeholder="Código (ej. 45) o actividad (ej. robo)" autocomplete="off" autofocus></div>
+<div class="cnt" id="cnt"></div>
+<div id="list"></div>
+<h2>Alfabeto fonético</h2>
+<div class="abc" id="abc"></div>
+</main>
+<script>
+const D=`0|Comprendido
+1|Cómo me escucha
+2|Bien
+3|Mal
+4|Fin del mensaje / Muerto
+5|Concentración
+6|Alerta
+7|Fuera de servicio
+8|En servicio
+9|Repita
+10|Disturbio
+11|La hora
+12|Oficial de ...
+13|Accidente de tránsito
+14|Vehículo para transporte de aprendidos
+15|Detenido
+16|Persona armada
+17|Homicidio
+18|Ayuda
+19|Regresar a la base
+20|Ubicación
+21|Teléfono
+22|Diríjase a ...
+23|En recorrido
+24|Radio patrulla
+25|Solicitud de permiso
+26|Agresión doméstica
+27|Manifestación
+28|Dirección Inv. Especiales
+29|Centro de admisión de San Sebastián
+30|Centro de admisión El Buen Pastor
+31|Asalto
+32|Taller mecánico (M.S.P)
+33|Espere un momento
+34|En la base
+35|Hospital Psiquiátrico / Loco
+36|Estado de ebriedad
+37|Sin efecto / No
+38|Servicio especial
+39|Denunciante
+40|Prostituta
+41|Drogadicto
+42|Morgue Judicial
+43|Estacionado en
+44|Radio operador
+45|Robo en progreso / Ladrón
+46|Sátiro
+47|Sospechoso
+48|Policía de tránsito
+49|Hospital San Juan de Dios
+50|Ministerio de Seguridad Pública
+51|Bloqueo de vías
+52|Hospital de la Mujer
+53|Paro de labores
+54|Persona herida
+55|Agitador
+56|Actos contra la moral
+57|Estado de embarazo
+58|Bomberos
+59|Cruz Roja
+60|Casa de habitación
+61|Alimentación personal
+62|Hospital Nacional de Niños
+63|Gasolinera de ...
+64|Casa Presidencial
+65|Dirección de Fuerza Pública
+66|Destacamento F.P
+67|Persona desaparecida
+68|Hosp. y Clínica C.C.S.S.
+69|Incendio
+70|Comandante en servicio
+71|Acto terrorista
+72|Punto de reunión
+73|Comisión Nacional de Emergencia
+74|Suicidio
+75|Emergencia
+76|Inundación
+77|Taller de radio
+78|Centro de comunicación
+79|Gente oculta
+80|Cierre de carreteras
+81|Tiroteo
+82|Orden superior
+83|Condición de explosivo
+84|Investigación
+85|Carreta
+86|Autopista
+87|Taxi
+88|Motocicleta
+89|Placa número ...
+90|Vehículo particular
+91|Pick-up
+92|Autobús
+93|Color
+94|Escolta
+95|O.I.J.
+96|Transportes (M.S.P)
+97|Operativo
+98|Solicitud de ubicación de radio patrullas
+99|Visita de comandante / Homosexual
+100|Aeronave
+101|Necesidad fisiológica
+102|La Reforma
+103|Seguridad Nacional`.split("\n").map(l=>{const[a,b]=l.split("|");return{c:"X "+a,n:a,t:b,s:0}});
+const S=[["X 80-1","80-1","Cierre parcial, vigilancia"],["X 80-2","80-2","Cierre parcial, filtro"],["X 80-3","80-3","Cierre total"],
+["A-1","a-1","Amenaza de explosivo (X 83)"],["A-2","a-2","Localizado paquete dudoso (X 83)"],["A-3","a-3","Identificado artefacto explosivo (X 83)"],["A-4","a-4","Detonación artefacto explosivo (X 83)"]]
+.map(([c,n,t])=>({c,n,t,s:1}));
+const ALL=D.concat(S);
+const ABC="Alfa,Bravo,Charli,Delta,Eco,Foxtrot,Golf,Hotel,India,Juliet,Kilo,Lima,Mike,November,Ñandú,Oscar,Papa,Québec,Romeo,Sierra,Tango,Uniforme,Victor,Whiskey,X-Ray,Yanqui,Zulú".split(",");
+document.getElementById("abc").innerHTML=ABC.map(w=>`<div><b>${w[0]}</b>${w}</div>`).join("");
+const norm=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function hl(t,q){if(!q)return esc(t);const nt=norm(t),i=nt.indexOf(q);if(i<0)return esc(t);return esc(t.slice(0,i))+"<mark>"+esc(t.slice(i,i+q.length))+"</mark>"+esc(t.slice(i+q.length))}
+const list=document.getElementById("list"),cnt=document.getElementById("cnt"),inp=document.getElementById("q");
+function render(){
+  let q=norm(inp.value.trim()).replace(/^x\s*/,"");
+  const raw=norm(inp.value.trim());
+  let r;
+  if(!raw)r=ALL;
+  else if(/^\d+$/.test(q)){
+    const ex=ALL.filter(x=>x.n===q), pre=ALL.filter(x=>x.n!==q&&x.n.startsWith(q)&&!x.s);
+    r=ex.concat(S.filter(x=>x.n.startsWith(q+"-")),pre);
+  } else {
+    const words=raw.split(/\s+/);
+    r=ALL.filter(x=>{const h=norm(x.t)+" "+x.n;return words.every(w=>h.includes(w))});
+  }
+  cnt.textContent=r.length+(r.length===1?" resultado":" resultados");
+  list.innerHTML=r.length?r.map(x=>`<div class="row${x.s?" sub":""}"><div class="code">${esc(x.c)}</div><div class="txt">${hl(x.t,/^\d+$/.test(q)?"":raw)}</div></div>`).join(""):'<div class="empty">Sin resultados</div>';
+}
+inp.addEventListener("input",render);render();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+</script>
+</body>
+</html>
